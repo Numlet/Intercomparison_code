@@ -24,6 +24,7 @@ OM_to_OC = 1.9 # for marine organics
 OM_to_OC_soa = 1.9 # Check literature
 OM_to_OC_poa = 1.9 # For consistency with GLOMAP comparison
 #OM_to_OC_poa = 1.4 # e.g. Aiken et al., 2008
+<<<<<<< Updated upstream
 
 # Selected stations to use in plotting
 
@@ -35,3 +36,5 @@ sel_stations_TOA <- c("west of Portugal", "west of Namibia", "La Reunion Island"
                       "North Pacific Ocean 2",
                       "New Caledonia", "Finokalia",
                       "Azores")
+=======
+>>>>>>> Stashed changes

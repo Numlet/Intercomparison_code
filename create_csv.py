@@ -2,7 +2,7 @@ import numpy as np
 import os
 os.chdir('/Users/jesusvergaratemprado/Intercomparison_code')
 from src import station_properties as stp
-
+stp.names
 from scipy.io import netcdf
 import pandas as pd
 def find_nearest_vector_index(array, value):
@@ -43,12 +43,13 @@ from collections import OrderedDict
 d=OrderedDict()
 d['model']=[]
 d['OA']=[]
-d['OA type']=[]
+d['OAtype']=[]
 d['OC']=[]
-d['OC type']=[]
+d['OCtype']=[]
 d['aerosol']=[]
-d['aerosol type']=[]
+d['aerosoltype']=[]
 d['month']=[]
+d['station']=[]
 d['lat']=[]
 d['lon']=[]
 
@@ -74,14 +75,15 @@ for iobs in range(len(stp.lons)):
             d['model'].append('GLOMAP')
             d['lat'].append(lat_point)
             d['lon'].append(lon_point)
-            d['OA'].append(data)
-            d['OA type'].append(aer_type)
-            d['OC'].append(data/factor_OC2OM)
-            d['OC type'].append(aer_type[:-1]+'C')
+            d['OA'].append(data*1e3)#ng/m3
+            d['OAtype'].append(aer_type)
+            d['OC'].append(data/factor_OC2OM*1e3)#ng/m3
+            d['OCtype'].append(aer_type[:-1]+'C')
             d['aerosol'].append(data)
-            d['aerosol type'].append(aer_type)
-            d['month']=imonth
+            d['aerosoltype'].append(aer_type)
+            d['month'].append(imonth)
+            d['station'].append(stp.names[iobs])
 
 df=pd.DataFrame(d)
 
-df.to_csv('formated_data.csv')
+df.to_csv('model_data/GLOMAP_TOA_station.csv',mode = 'w', index=False)
