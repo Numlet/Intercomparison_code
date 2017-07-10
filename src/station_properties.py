@@ -6,10 +6,6 @@ Properties of the measurement stations
 import numpy as np
 import os
 
-data=np.genfromtxt('MarineOM.csv',delimiter=',',dtype=None)
-
-print data
-
 lons=[360.0-11.25, 11.25, 56.25, 360.0-63.75, 78.75,
                    360.0-88.75, 360.0-96.25, 111.25, 121.25, 128.75,
                    158.75, 161.25, 171.25, 9.904, 360.0-122.91,
@@ -32,10 +28,3 @@ names=["west of Portugal", "west of Namibia", "La Reunion Island",
                    "Cape Grim, Tasmania", "Mawson - Antarctica",
                    "WACS-I - George's Bank", "WACS-I - Sargasso Sea",
                    "SPURS-2", "Alert", "WACS-II", "Finokalia", "Azores"]
-
-i=2
-for i in range(data.shape[0]-1):
-    lons.append(float(data[i+1,19]))
-    lats.append(float(data[i+1,18]))
-    names.append(data[i+1,0])
-#                    as.character(filter_samples$FilterID))
