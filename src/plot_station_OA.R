@@ -18,7 +18,8 @@ for (i in 1:dim(filter_obs_sel_stations_TOA)[1]) {
                        TOA.station$month==filter_obs_sel_stations_TOA[i, ]$month, ]
   if (dim(tmp)[1]!=3) {print("Warning: expected to select three values from TOA.station, got wrong number")}
   tmp <- rbind.data.frame(tmp,
-                          data.frame(OA=sum(tmp$OA), OAtype="TOA",
+                          data.frame(model=tmp$model[1],
+                                     OA=sum(tmp$OA), OAtype="TOA",
                                      OC=sum(tmp$OC), OCtype="TOC",
                                      aerosol=sum(tmp$aerosol),aerosoltype="TOC",
                                      month=tmp$month[1], station=tmp$station[1],
@@ -73,7 +74,7 @@ dev.off()
 cor_with_marine <- round(cor(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
                              obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"]),
                          digits = 2)
-cor_no_marine   <- round(cor(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
+cor_no_marine   <- round(cor(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$OCtype=="TOC"],
                              obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="SOC"] +
                                obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="POC"]),
                          digits = 2)
