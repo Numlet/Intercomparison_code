@@ -1,7 +1,8 @@
 import numpy as np
 import os
 os.chdir('/Users/jesusvergaratemprado/Intercomparison_code')
-import station_properties as stp
+from src import station_properties as stp
+
 from scipy.io import netcdf
 import pandas as pd
 def find_nearest_vector_index(array, value):
