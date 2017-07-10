@@ -1,17 +1,34 @@
 # Plot modelled vs observed OM and OC
 library(ggplot2)
 
-# Directoyr paths and definitions
+# Directory paths and definitions
 source("path_definitions.R")
 
-# Read data from .csv files
+# Read model and obs data from .csv files
 TOA.station <- read.csv(paste(csv_dir, "/", csv_name_root, "_TOA_station",
                        ".csv", sep=""))
 
-write.csv(obs_vs_model_TOA,
-          file = paste(csv_dir, "/", csv_name_root, "_obs_vs_model_TOA",
-                       ".csv", sep=""), row.names=FALSE)
+filter_obs_sel_stations_TOA <- read.csv(paste(obs_dir, "/", "filter_obs_sel_stations_TOA",
+                                        ".csv", sep=""))
 
+# Construct subsampled data frame with model data that matches obs data
+obs_vs_model_TOA <- data.frame()
+for (i in 1:dim(filter_obs_sel_stations_TOA)[1]) {
+  tmp <- TOA.station[as.character(TOA.station$station)==as.character(filter_obs_sel_stations_TOA[i, ]$station) &
+                       TOA.station$month==filter_obs_sel_stations_TOA[i, ]$month, ]
+  if (dim(tmp)[1]!=3) {print("Warning: expected to select three values from TOA.station, got wrong number")}
+  tmp <- rbind.data.frame(tmp,
+                          data.frame(OA=sum(tmp$OA), OAtype="TOA",
+                                     OC=sum(tmp$OC), OCtype="TOC",
+                                     aerosol=sum(tmp$aerosol),aerosoltype="TOC",
+                                     month=tmp$month[1], station=tmp$station[1],
+                                     lat=tmp$lat[1], lon=tmp$lon[1])
+  )
+  tmp$obs_OC   <- filter_obs_sel_stations_TOA[i, ]$OC
+  tmp$obs_lbnd <- filter_obs_sel_stations_TOA[i, ]$lbnd
+  tmp$obs_ubnd <- filter_obs_sel_stations_TOA[i, ]$ubnd
+  obs_vs_model_TOA <- rbind.data.frame(obs_vs_model_TOA, tmp)
+}
 
 # Construct panel plot: seasonal cycle of OA partitioning
 p <- ggplot(subset(TOA.station,
@@ -25,13 +42,15 @@ p <- ggplot(subset(TOA.station,
   ylab(expression(paste("Organic carbon mass [ng", m^{-3}, "]",
                         sep=""))) +
   geom_point(data=filter_obs_sel_stations_TOA, inherit.aes = FALSE,
-             mapping=aes(x=month, y=OA, fill=NA), show.legend=FALSE) +
+             mapping=aes(x=month, y=OC, fill=NA), show.legend=FALSE) +
   geom_errorbar(data=filter_obs_sel_stations_TOA, inherit.aes = FALSE,
                 mapping=aes(x=month, ymin=lbnd, ymax=ubnd),
                 color="black", alpha=1,
                 linetype=1, width=0.2, na.rm=TRUE)
 
-png("Station_OC_partitioning.png", pointsize = 24, width=900, height=1200)
+png(paste(plotdir, "/", plot_name_root,
+          "_Station_OC_partitioning.png", sep=""),
+          pointsize = 24, width=900, height=1200)
   p
 dev.off()
 # TODO: Add lat, lon to labels under name of location
@@ -43,7 +62,9 @@ dev.off()
 #  theme(strip.text.y=element_text(angle=0)) +
 #  scale_x_continuous(breaks = 1:12)
 #
-#png("Station_OA_NCL_partitioning.png", pointsize = 16)
+#png(paste(plotdir, "/", plot_name_root,
+#          "_Station_OA_NCL_partitioning.png", sep=""),
+#    pointsize = 16)
 #p
 #dev.off()
 
@@ -65,7 +86,9 @@ rmse_no_marine <- round(sqrt(mean((obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aero
                         digits = 2)
 
 # Scatterplot of model vs obs
-png("model_vs_obs_TOC_scatter.png", pointsize = 16)
+png(paste(plotdir, "/", plot_name_root,
+          "_model_vs_obs_TOC_scatter.png", sep=""),
+    pointsize = 16)
   par(mar=c(4.2, 4.5, 1, 1))
   
   plot(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
