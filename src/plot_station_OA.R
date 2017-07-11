@@ -71,19 +71,20 @@ dev.off()
 
 # Plot model vs obs
 # Calculate R-squared statistic
+# Note GLOMAP model output file has only TOC and MOC
 cor_with_marine <- round(cor(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
                              obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"]),
                          digits = 2)
 cor_no_marine   <- round(cor(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$OCtype=="TOC"],
-                             obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="SOC"] +
-                               obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="POC"]),
+                             obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"] -
+                               obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="MOC"]),
                          digits = 2)
 rmse_with_marine <- round(sqrt(mean((obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"] -
                                        obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"])^2)),
                           digits = 2)
 rmse_no_marine <- round(sqrt(mean((obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"] -
-                                     obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="SOC"] -
-                                     obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="POC"])^2)),
+                                     (obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"] -
+                                      obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="MOC"]))^2)),
                         digits = 2)
 
 # Scatterplot of model vs obs
@@ -100,8 +101,8 @@ png(paste(plotdir, "/", plot_name_root,
                                sep="")), log="xy", xlim=c(10, 6000), ylim=c(10, 6000)
   )
   points(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
-         obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="SOC"] +
-           obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="POC"],
+         obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"] -
+           obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="MOC"],
          xlab = expression(paste("Observed organic aerosol mass [ng", m^{-3}, "]",
                                  sep="")),
          ylab = expression(paste("Modelled organic aerosol mass [ng", m^{-3}, "]",
