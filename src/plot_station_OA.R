@@ -54,7 +54,7 @@ p <- ggplot(subset(TOA.station,
 png(paste(plotdir, "/", plot_name_root,
           "_Station_OC_partitioning.png", sep=""),
           pointsize = 24, width=900, height=1200)
-  p
+  print(p)
 dev.off()
 # TODO: Add lat, lon to labels under name of location
 
