@@ -86,13 +86,12 @@ rmse_no_marine <- round(sqrt(mean((obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aero
                                      (obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"] -
                                       obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="MOC"]))^2)),
                         digits = 2)
-
 # Scatterplot of model vs obs
 png(paste(plotdir, "/", plot_name_root,
           "_model_vs_obs_TOC_scatter.png", sep=""),
     pointsize = 16)
   par(mar=c(4.2, 4.5, 1, 1))
-  
+
   plot(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
        obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"],
        xlab = expression(paste("Observed organic aerosol mass [ng", m^{-3}, "]",
@@ -112,7 +111,7 @@ png(paste(plotdir, "/", plot_name_root,
   abline(0, 1)
   abline(0, 10, untf=TRUE, lty=2)
   abline(0, 0.1, untf=TRUE, lty=2)
-  
+
   # Add legend
   legend("topleft",
          legend=c(expression(paste("With marine OA", sep="")),
