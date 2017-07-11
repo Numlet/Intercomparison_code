@@ -16,15 +16,17 @@ obs_vs_model_TOA <- data.frame()
 for (i in 1:dim(filter_obs_sel_stations_TOA)[1]) {
   tmp <- TOA.station[as.character(TOA.station$station)==as.character(filter_obs_sel_stations_TOA[i, ]$station) &
                        TOA.station$month==filter_obs_sel_stations_TOA[i, ]$month, ]
-  if (dim(tmp)[1]!=3) {print("Warning: expected to select three values from TOA.station, got wrong number")}
-  tmp <- rbind.data.frame(tmp,
-                          data.frame(model=tmp$model[1],
-                                     OA=sum(tmp$OA), OAtype="TOA",
-                                     OC=sum(tmp$OC), OCtype="TOC",
-                                     aerosol=sum(tmp$aerosol),aerosoltype="TOC",
-                                     month=tmp$month[1], station=tmp$station[1],
-                                     lat=tmp$lat[1], lon=tmp$lon[1])
-  )
+  if (sum(tmp$OCtype=="TOC")==0) {
+    if (dim(tmp)[1]!=3) {print("Warning: expected to select three values from TOA.station, got wrong number")}
+    tmp <- rbind.data.frame(tmp,
+                            data.frame(model=tmp$model[1],
+                                       OA=sum(tmp$OA), OAtype="TOA",
+                                       OC=sum(tmp$OC), OCtype="TOC",
+                                       aerosol=sum(tmp$aerosol),aerosoltype="TOC",
+                                       month=tmp$month[1], station=tmp$station[1],
+                                       lat=tmp$lat[1], lon=tmp$lon[1])
+    )
+  }
   tmp$obs_OC   <- filter_obs_sel_stations_TOA[i, ]$OC
   tmp$obs_lbnd <- filter_obs_sel_stations_TOA[i, ]$lbnd
   tmp$obs_ubnd <- filter_obs_sel_stations_TOA[i, ]$ubnd
@@ -72,17 +74,17 @@ dev.off()
 # Plot model vs obs
 # Calculate R-squared statistic
 # Note GLOMAP model output file has only TOC and MOC
-cor_with_marine <- round(cor(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
+cor_with_marine <- round(cor(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$OCtype=="TOC"],
                              obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"]),
                          digits = 2)
 cor_no_marine   <- round(cor(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$OCtype=="TOC"],
                              obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"] -
                                obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="MOC"]),
                          digits = 2)
-rmse_with_marine <- round(sqrt(mean((obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"] -
+rmse_with_marine <- round(sqrt(mean((obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$OCtype=="TOC"] -
                                        obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"])^2)),
                           digits = 2)
-rmse_no_marine <- round(sqrt(mean((obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"] -
+rmse_no_marine <- round(sqrt(mean((obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$OCtype=="TOC"] -
                                      (obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"] -
                                       obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="MOC"]))^2)),
                         digits = 2)
@@ -92,14 +94,14 @@ png(paste(plotdir, "/", plot_name_root,
     pointsize = 16)
   par(mar=c(4.2, 4.5, 1, 1))
 
-  plot(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
+  plot(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$OCtype=="TOC"],
        obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"],
        xlab = expression(paste("Observed organic aerosol mass [ng", m^{-3}, "]",
                                sep="")),
        ylab = expression(paste("Modelled organic aerosol mass [ng", m^{-3}, "]",
                                sep="")), log="xy", xlim=c(10, 6000), ylim=c(10, 6000)
   )
-  points(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$aerosoltype=="TOC"],
+  points(obs_vs_model_TOA$obs_OC[obs_vs_model_TOA$OCtype=="TOC"],
          obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="TOC"] -
            obs_vs_model_TOA$OC[obs_vs_model_TOA$OCtype=="MOC"],
          xlab = expression(paste("Observed organic aerosol mass [ng", m^{-3}, "]",
