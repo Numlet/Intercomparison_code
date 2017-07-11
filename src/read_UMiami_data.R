@@ -9,7 +9,8 @@ umiami.files <- grep("txt", list.files(paste(obs_dir, "/UMiami_dataset/",
 umiami.files <- umiami.files[umiami.files!="readme.txt"]
 umiami.files <- gsub(".txt", "", umiami.files)
 
-# Read input data
+# Read input data for each site and append data frame
+obsdata.all <- data.frame()
 for (sitename in umiami.files) {
 
   data.in <- read.delim(paste(obs_dir, "/UMiami_dataset/", sitename, ".txt", sep=""))
@@ -42,10 +43,9 @@ for (sitename in umiami.files) {
     
     data.in$DATE <- tmp
   }
-}
 
 # Construct obs data frame
-  obsdata=data.frame(date=data.in$DATE, site=sitename)
+  obsdata <- data.frame(date=data.in$DATE, site=sitename)
   try(obsdata[["avg_cl"]] <- avg_cl, silent=TRUE)
   try(obsdata[["avg_na"]] <- avg_na, silent=TRUE)
   try(obsdata[["avg_so4"]] <- avg_so4, silent=TRUE)
@@ -57,6 +57,9 @@ for (sitename in umiami.files) {
   try(obsdata[["month"]] <- factor(str_to_upper(months(obsdata$date, abbreviate = TRUE)) ,
                                    ordered=TRUE,
                                    levels=monthnames))
+
+  obsdata.all <- rbind(obsdata.all, obsdata)
+}
 
 # Write out unified table of UMiami obs data (selected columns)
 write.csv(obsdata, paste(obs_dir, "/UMiami_unified.csv", sep=""),
