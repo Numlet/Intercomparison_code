@@ -110,5 +110,5 @@ for (sitename in umiami.files) {
 }
 
 # Write out unified table of UMiami obs data (selected columns)
-write.csv(obsdata, paste(obs_dir, "/UMiami_unified.csv", sep=""),
+write.csv(obsdata.all, paste(obs_dir, "/UMiami_unified.csv", sep=""),
           row.names = FALSE)
