@@ -44,19 +44,67 @@ for (sitename in umiami.files) {
     data.in$DATE <- tmp
   }
 
-# Construct obs data frame
-  obsdata <- data.frame(date=data.in$DATE, site=sitename)
-  try(obsdata[["avg_cl"]] <- avg_cl, silent=TRUE)
-  try(obsdata[["avg_na"]] <- avg_na, silent=TRUE)
-  try(obsdata[["avg_so4"]] <- avg_so4, silent=TRUE)
-  try(obsdata[["avg_dust"]] <- avg_dust, silent=TRUE)
-  try(obsdata[["total_aerosol"]] <- data.in$total_aerosol, silent=TRUE)
-  # Total (average) salt mass (Na+Cl), estimate using Na as conservative tracer.
-  try(obsdata[["NCL"]] <- avg_na*58.44/22.9898, silent=TRUE)
+  # Load data fields required
   
-  try(obsdata[["month"]] <- factor(str_to_upper(months(obsdata$date, abbreviate = TRUE)) ,
-                                   ordered=TRUE,
-                                   levels=monthnames))
+  # non-sea-salt Sulfate: AVG_NSSSO4
+  # Sulfate: AVG_SO4
+  # Dust: AVG_DUST
+  # Sodium: AVG_NA
+  # Chlorine: AVG_CL
+  # MSA: AVG_MSA
+  # Nitrate: AVG_NO3
+  # Ammonium: AVG_NH4
+  
+# Construct obs data frame including all average aerosol fields
+  obsdata <- data.frame(date=data.in$DATE, site=sitename)
+  if (any(names(data.in)=="AVG_CL")) {
+    obsdata[["avg_cl"]] <- as.numeric(as.character(data.in$AVG_CL))
+  } else {
+    obsdata[["avg_cl"]]<-array(NA, dim(obsdata)[1])
+  }
+  if (any(names(data.in)=="AVG_NA")) {
+    obsdata[["avg_na"]] <- as.numeric(as.character(data.in$AVG_NA))
+  } else {
+    obsdata[["avg_na"]]<-array(NA, dim(obsdata)[1])
+  }
+  if (any(names(data.in)=="AVG_SO4")) {
+    obsdata[["avg_so4"]] <- as.numeric(as.character(data.in$AVG_SO4))
+  } else {
+    obsdata[["avg_so4"]]<-array(NA, dim(obsdata)[1])
+  }
+  if (any(names(data.in)=="AVG_DUST")) {
+    obsdata[["avg_dust"]] <- as.numeric(as.character(data.in$AVG_DUST))
+  } else {
+    obsdata[["avg_dust"]]<-array(NA, dim(obsdata)[1])
+  }
+  if (any(names(data.in)=="AVG_NO3")) {
+    obsdata[["avg_no3"]] <- as.numeric(as.character(data.in$AVG_NO3))
+  } else {
+    obsdata[["avg_no3"]]<-array(NA, dim(obsdata)[1])
+  }
+  if (any(names(data.in)=="AVG_MSA")) {
+    obsdata[["avg_msa"]] <- as.numeric(as.character(data.in$AVG_MSA))
+  } else {
+    obsdata[["avg_msa"]]<-array(NA, dim(obsdata)[1])
+  }
+  if (any(names(data.in)=="AVG_NH4")) {
+    obsdata[["avg_nh4"]] <- as.numeric(as.character(data.in$AVG_NH4))
+  } else {
+    obsdata[["avg_nh4"]]<-array(NA, dim(obsdata)[1])
+  }
+  
+  # Total (average) salt mass (Na+Cl), estimate using Na as conservative tracer.
+  obsdata[["avg_ncl"]] <- obsdata$avg_na*58.44/22.9898
+
+  # Total (average) aerosol mass for model comparison -- only compare so4+dust+ncl
+  obsdata[["total_aerosol"]] <- rowSums(cbind(obsdata$avg_so4,
+                                              obsdata$avg_dust,
+                                              obsdata$avg_ncl),
+                                              na.rm=TRUE)
+
+  obsdata[["month"]] <- factor(str_to_upper(months(obsdata$date, abbreviate = TRUE)) ,
+                                        ordered=TRUE,
+                                        levels=monthnames)
 
   obsdata.all <- rbind(obsdata.all, obsdata)
 }
