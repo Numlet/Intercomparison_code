@@ -19,6 +19,9 @@ total_TOA_file="total_organic_mass.nc"
 total_MOA_file='wiom_acc.nc'
 total_aerosol_file='total_aerosol_mass.nc'
 total_sea_salt_file='total_sea_salt.nc'
+total_dust_file='total_dust_mass.nc'
+total_su_file='total_su_mass.nc'
+total_bc_file='total_bc_mass.nc'
 
 mb=netcdf.netcdf_file(nc_path+total_TOA_file,'r')
 mb.variables
@@ -38,7 +41,18 @@ mb=netcdf.netcdf_file(nc_path+total_sea_salt_file,'r')
 mb.variables
 total_SS=mb.variables['total_sea_salt'][:]
 
-#%%
+mb=netcdf.netcdf_file(nc_path+total_dust_file,'r')
+mb.variables
+total_DUST=mb.variables['total_dust_mass'][:]
+
+mb=netcdf.netcdf_file(nc_path+total_su_file,'r')
+mb.variables
+total_SU=mb.variables['total_su_mass'][:]
+
+mb=netcdf.netcdf_file(nc_path+total_bc_file,'r')
+mb.variables
+total_BC=mb.variables['total_bc_mass'][:]
+
 
 lat=mb.variables['lat'][:]
 levels=mb.variables['levels'][:]
@@ -47,6 +61,9 @@ lon180=np.copy(lon)
 lon180[lon>180]=lon[lon>180]-360
 
 months=range(1,13)
+
+#%%
+
 
 
 
@@ -120,7 +137,10 @@ dmia['lat']=[]
 dmia['lon']=[]
 dmia['MOA']=[]
 dmia['TOA']=[]
+dmia['BC']=[]
+dmia['SO4']=[]
 dmia['NCL']=[]
+dmia['DST']=[]
 dmia['total.aerosol']=[]
 
 
@@ -143,10 +163,16 @@ for iobs in range(len(sites)):
         dmia['MOA'].append(total_MOA[isurf,ilat,ilon,imonth])
         dmia['TOA'].append(total_TOA[isurf,ilat,ilon,imonth])
         dmia['NCL'].append(total_SS[isurf,ilat,ilon,imonth])
+        dmia['DST'].append(total_DUST[isurf,ilat,ilon,imonth])
+        dmia['SO4'].append(total_SU[isurf,ilat,ilon,imonth])
+        dmia['BC'].append(total_BC[isurf,ilat,ilon,imonth])
         dmia['total.aerosol'].append(total_AM[isurf,ilat,ilon,imonth])
-        dmia['month'].append(month_str[imonth])
+        dmia['month'].append(months_str[imonth])
         dmia['site'].append(sites[iobs])
         dmia['site.long.name'].append(sites_long_name[iobs])
+        print ilat, ilon, sites_long_name[iobs]
+
+
 
 dmiaf=pd.DataFrame(dmia)
 
