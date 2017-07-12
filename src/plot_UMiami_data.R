@@ -3,6 +3,9 @@
 # Load station locations
 source("define_UMiami_stations.R")
 
+# Load path definitions
+source("path_definitions.R")
+
 # Load observational data
 obsdata <- read.csv(paste(obs_dir, "/UMiami_unified.csv", sep=""))
 modeldata <- read.csv(paste(csv_dir, "/", model_name,
@@ -12,15 +15,18 @@ modeldata <- read.csv(paste(csv_dir, "/", model_name,
 
 # Append model and obs data to dataframe for each site
 umiami.model.obs <- list()
+for (sitename in umiami.coords$site) {
 umiami.model.obs[[sitename]] <- list(modeldata=modeldata, obsdata=obsdata,
                                      # Calculate monthly mean at each site
                                      obsdata.monthmean=aggregate(obsdata,
                                                                  by=list(obsdata$month),
                                                                  FUN="mean", na.rm=TRUE))
+}
 
 
 # Compare total aerosol seasonal cycles
-png(paste("surf_monthly_mean_aerosol_comparison_total_allsites.png", sep=""),
+png(paste(plotdir, "/", model_name,
+          "_surf_monthly_mean_aerosol_comparison_total_allsites.png", sep=""),
     width=1200, height=1200, pointsize=24)
 par(mfrow=c(8,4), oma=c(2, 3, 1, 1), mar=c(1, 2, 1, 1))
 for (i in 1:31) {
