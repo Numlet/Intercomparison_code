@@ -7,7 +7,7 @@ ncfile_name <- "reduced_chem_MOA_code.FC5PLMOD.ne30_ne30.edison.MOA_mix3.nc"
 # Output file location
 csv_dir <- "../model_data/"
 #csv_name_root <- "GLOMAP"
-csv_name_root <- model_name
+csv_name_root <- "GLOMAP"
 
 # Observations file path
 obs_dir <- "../obs_data/"
