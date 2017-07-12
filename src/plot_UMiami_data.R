@@ -17,10 +17,9 @@ modeldata <- read.csv(paste(csv_dir, "/", model_name,
 umiami.model.obs <- list()
 for (sitename in umiami.coords$site) {
   umiami.model.obs[[sitename]] <- list(modeldata=modeldata[modeldata$site==sitename, ],
-                                       obsdata=obsdata,
-                                       # Calculate monthly mean at each site
-                                       obsdata.monthmean=aggregate(obsdata,
-                                                                   by=list(obsdata$month),
+                                       # Calculate monthly mean of obs at each site
+                                       obsdata.monthmean=aggregate(obsdata[obsdata$site==sitename, ],
+                                                                   by=list(obsdata$month[obsdata$site==sitename]),
                                                                    FUN="mean", na.rm=TRUE))
 }
 
