@@ -92,7 +92,8 @@ dev.off()
 
 
 # Compare sea salt seasonal cycles
-png(paste("surf_monthly_mean_aerosol_comparison_NCL_allsites.png", sep=""),
+png(paste(plotdir, "/", model_name,
+          "_surf_monthly_mean_aerosol_comparison_NCL_allsites.png", sep=""),
     width=1200, height=1200, pointsize=24)
   par(mfrow=c(8,4), oma=c(2, 3, 1, 1), mar=c(1, 2, 1, 1))
   for (i in 1:31) {
@@ -158,7 +159,7 @@ dev.off()
 
 # Compare dust seasonal cycles
 png(paste(plotdir, "/", model_name,
-          "surf_monthly_mean_aerosol_comparison_DST_allsites.png", sep=""))
+          "_surf_monthly_mean_aerosol_comparison_DST_allsites.png", sep=""))
   par(mfrow=c(8,4), oma=c(2, 2, 1, 1), mar=c(1, 1, 1, 1))
   for (i in 1:31) {
     sitename <- umiami.coords$site[i]
