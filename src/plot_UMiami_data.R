@@ -127,7 +127,7 @@ png(paste(plotdir, "/", model_name,
   par(oma=c(0, 0, 0, 0)+0.1)
   plot(umiami.model.obs[[1]]$obsdata.monthmean$avg_ncl,
        umiami.model.obs[[1]]$modeldata$NCL,
-       xlim=c(0.1, 250), ylim=c(0.1, 250),
+       xlim=c(0.0001, 250), ylim=c(0.0001, 250),
        col=1, pch=1, log="xy",
        xlab=expression(paste("Monthly mean sea salt aerosol concentration (observed) [", mu, "g ", m^-3, "]", sep="")),
        ylab=expression(paste("Monthly mean sea salt aerosol concentration (model) [", mu, "g ", m^-3, "]", sep="")))
@@ -149,10 +149,17 @@ png(paste(plotdir, "/", model_name,
   #  legend(x=5, y=300, legend=umiami.coords$site, col=1:31, pch=(c(1:31) %% 25),
   #         box.lwd=0, lwd=0, ncol=4, xpd=NA, xjust=0.5, yjust=0,
   #         cex=0.7, y.intersp = 1.3, pt.lwd=1)
-  mtext(text = paste("Model-observation correlation = ",
-                     cor(ncl.model.obs$modeldata, ncl.model.obs$obsdata),
+  mtext(text = paste("Correlation = ",
+                     signif(cor(ncl.model.obs$modeldata, ncl.model.obs$obsdata),
+                            digits=2),
                      sep=""),
         side=3, line=0)
+  mtext(text = paste("RMSE = ",
+                     signif(sqrt(mean((ncl.model.obs$modeldata - ncl.model.obs$obsdata)^2,
+                               na.rm=TRUE)),
+                            digits=2),
+                     sep=""),
+        side=3, line=1)
 dev.off()
 
 
@@ -182,13 +189,13 @@ dev.off()
 
 # Scatterplot of DST aerosol
 png(paste(plotdir, "/", model_name,
-          "surf_monthly_mean_aerosol_comparison_DST_scatter.png", sep=""),
+          "_surf_monthly_mean_aerosol_comparison_DST_scatter.png", sep=""),
     width = 800, height = 800, pointsize = 24)
   #  par(oma=c(0, 0, 6, 0)+0.1)
   par(oma=c(0, 0, 0, 0)+0.1)
   plot(umiami.model.obs[[1]]$obsdata.monthmean$avg_dust,
        umiami.model.obs[[1]]$modeldata$DST,
-       xlim=c(0.1, 250), ylim=c(0.1, 250),
+       xlim=c(0.001, 1000), ylim=c(0.0001, 1000),
        col=1, pch=1, log="xy",
        xlab=expression(paste("Monthly mean dust aerosol concentration (observed) [",
                              mu, "g ", m^-3, "]", sep="")),
@@ -213,9 +220,16 @@ png(paste(plotdir, "/", model_name,
   #  legend(x=5, y=300, legend=umiami.coords$site, col=1:31, pch=(c(1:31) %% 25),
   #         box.lwd=0, lwd=0, ncol=4, xpd=NA, xjust=0.5, yjust=0,
   #         cex=0.7, y.intersp = 1.3, pt.lwd=1)
-  mtext(text = paste("Model-observation correlation = ",
-                     cor(dst.model.obs$modeldata, dst.model.obs$obsdata,
+  mtext(text = paste("Correlation = ",
+                     signif(cor(dst.model.obs$modeldata, dst.model.obs$obsdata,
                          use="pairwise.complete.obs"),
+                         digits=2),
                      sep=""),
         side=3, line=0)
-dev.off()
+  mtext(text = paste("RMSE = ",
+                     signif(sqrt(mean((dst.model.obs$modeldata - dst.model.obs$obsdata)^2,
+                                      na.rm=TRUE)),
+                            digits=2),
+                     sep=""),
+        side=3, line=1)
+  dev.off()
