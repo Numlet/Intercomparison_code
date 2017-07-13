@@ -37,6 +37,8 @@ total_ss_acc.shape
 
 
 
+
+
 # mb=netcdf.netcdf_file(nc_path+submicron_sea_salt_file,'r')
 # mb.variables
 # total_ss_acc=mb.variables['sea_salt_acc'][:]
