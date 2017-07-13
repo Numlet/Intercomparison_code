@@ -112,17 +112,21 @@ dev.off()
 # TODO: Add lat, lon to labels under name of location
 
 # Make plot comparing MOC in models at same locations.
-pMOC <- ggplot(subset(OA.station,
-                   (station %in% sel_stations_TOA_lim) &
-                     (OCtype=="MOC")),
-            aes(x=month, y=OC, group=interaction(model, OCtype),
-                color=model, linetype=OCtype)
-) + geom_line()  + geom_point(mapping = aes(pch=OCtype)) +
-  scale_x_continuous(breaks = 1:12) +
-  facet_wrap(~station, scales="free") +
-  xlab("Month of year") +
-  ylab(expression(paste("Organic carbon mass [ng", m^{-3}, "]",
-                        sep=""))) +
-  theme_minimal() +
-  theme(legend.position = c(0.9, 0.1))
-pMOC
+png(paste(plotdir, "/",
+          "compare_models_Station_MOC_seasonal.png", sep=""),
+    pointsize = 24, width=900, height=1200)
+  pMOC <- ggplot(subset(OA.station,
+                     (station %in% sel_stations_TOA_lim) &
+                       (OCtype=="MOC")),
+              aes(x=month, y=OC, group=interaction(model, OCtype),
+                  color=model, linetype=OCtype)
+  ) + geom_line(size=2)  + geom_point(mapping = aes(pch=OCtype)) +
+    scale_x_continuous(breaks = 1:12) +
+    facet_wrap(~station, scales="free") +
+    xlab("Month of year") +
+    ylab(expression(paste("Organic carbon mass [ng", m^{-3}, "]",
+                          sep=""))) +
+    theme_minimal(base_size=24) +
+    theme(legend.position = c(0.9, 0.1))
+  print(pMOC)
+dev.off()
