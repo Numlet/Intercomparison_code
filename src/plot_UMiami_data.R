@@ -97,14 +97,16 @@ dev.off()
 
 # Compare sea salt seasonal cycles
 png(paste(plotdir, "/", model_name,
-          "_surf_monthly_mean_aerosol_comparison_NCL_allsites.png", sep=""),
+          "_surf_monthly_mean_aerosol_comparison_Na_allsites.png", sep=""),
     width=1200, height=1200, pointsize=24)
   par(mfrow=c(8,4), oma=c(2, 3, 1, 1), mar=c(1, 2, 1, 1))
   for (i in 1:31) {
     sitename <- umiami.coords$site[i]
     matplot(1:12,
-            cbind(umiami.model.obs[[sitename]]$obsdata.monthmean$avg_ncl,
-                  umiami.model.obs[[sitename]]$modeldata$NCL),
+            cbind(umiami.model.obs[[sitename]]$obsdata.monthmean$avg_na,
+                  # Compare Na+ mass: assume Na+ is 30.77% of SSA mass
+                  # Ferguson, 1982; Gong et al., 1997
+                  umiami.model.obs[[sitename]]$modeldata$NCL*0.3077),
             type='l', axes=FALSE, lwd=4,
             main=sitename, xlab="", ylab="")
     box()
@@ -114,7 +116,7 @@ png(paste(plotdir, "/", model_name,
       axis(1, labels=monthnames, at=1:12, par(las=2))
     }
     if (i == 1) {title(ylab=expression(
-      paste("Monthly mean sea salt aerosol concentration (model) [",
+      paste("Monthly mean ", Na^{'+'},"aerosol concentration (model) [",
             mu, "g ", m^{-3}, "]", sep="")),
       outer=TRUE, line=1)}
   }
@@ -130,23 +132,27 @@ png(paste(plotdir, "/", model_name,
     width = 800, height = 800, pointsize = 24)
   #  par(oma=c(0, 0, 6, 0)+0.1)
   par(oma=c(0, 0, 0, 0)+0.1)
-  plot(umiami.model.obs[[1]]$obsdata.monthmean$avg_ncl,
-       umiami.model.obs[[1]]$modeldata$NCL,
+  plot(umiami.model.obs[[1]]$obsdata.monthmean$avg_na,
+       # Compare Na+ mass: assume Na+ is 30.77% of SSA mass
+       # Ferguson, 1982; Gong et al., 1997
+       umiami.model.obs[[1]]$modeldata$NCL*.3077,
        xlim=c(0.0001, 250), ylim=c(0.0001, 250),
        col=1, pch=1, log="xy",
-       xlab=expression(paste("Monthly mean sea salt aerosol concentration (observed) [", mu, "g ", m^-3, "]", sep="")),
-       ylab=expression(paste("Monthly mean sea salt aerosol concentration (model) [", mu, "g ", m^-3, "]", sep="")))
+       xlab=expression(paste("Monthly mean ", Na^{'+'},
+                             "aerosol concentration (observed) [", mu, "g ", m^-3, "]", sep="")),
+       ylab=expression(paste("Monthly mean ", Na^{'+'},
+                             "aerosol concentration (model) [", mu, "g ", m^-3, "]", sep="")))
   
-  ncl.model.obs <- data.frame(modeldata=umiami.model.obs[[1]]$modeldata$NCL,
-                              obsdata=umiami.model.obs[[1]]$obsdata.monthmean$avg_ncl)
+  na.model.obs <- data.frame(modeldata=umiami.model.obs[[1]]$modeldata$NCL*.3077,
+                              obsdata=umiami.model.obs[[1]]$obsdata.monthmean$avg_na)
   
   for (i in 2:31) {
-    points(umiami.model.obs[[i]]$obsdata.monthmean$avg_ncl,
-           umiami.model.obs[[i]]$modeldata$NCL,
+    points(umiami.model.obs[[i]]$obsdata.monthmean$avg_na,
+           umiami.model.obs[[i]]$modeldata$NCL*.3077,
            col=i, pch=(i %% 25))
-    ncl.model.obs <- rbind(ncl.model.obs,
-                           data.frame(modeldata=umiami.model.obs[[i]]$modeldata$NCL,
-                                      obsdata=umiami.model.obs[[i]]$obsdata.monthmean$avg_ncl))
+    na.model.obs <- rbind(na.model.obs,
+                           data.frame(modeldata=umiami.model.obs[[i]]$modeldata$NCL*.3077,
+                                      obsdata=umiami.model.obs[[i]]$obsdata.monthmean$avg_na))
   }
   abline(0, 1)
   abline(0, 10, untf=TRUE, lty=2)
