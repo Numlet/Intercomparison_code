@@ -8,10 +8,13 @@ source("path_definitions.R")
 
 # Load observational data
 obsdata <- read.csv(paste(obs_dir, "/UMiami_unified.csv", sep=""))
-modeldata <- read.csv(paste(csv_dir, "/", model_name,
-                            "_UMiami_stations.csv", sep=""))
+obsdata$month <- ordered(obsdata$month, levels=monthnames, labels=monthnames)
 
 # Load model data interpolated to station locations
+modeldata <- read.csv(paste(csv_dir, "/", model_name,
+                            "_UMiami_stations.csv", sep=""))
+modeldata$month <- ordered(modeldata$month, levels=monthnames, labels=monthnames)
+
 
 # Append model and obs data to dataframe for each site
 umiami.model.obs <- list()
