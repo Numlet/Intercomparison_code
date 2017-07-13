@@ -85,7 +85,7 @@ p <- ggplot(subset(OA.station,
                    (OCtype %in% c("TOC", "COC"))),
             aes(x=month, y=OC, group=interaction(model, OCtype),
                 color=model, linetype=OCtype)
-) + geom_line()  + geom_point(mapping = aes(pch=OCtype)) +
+) + geom_line(size=2)  + geom_point(mapping = aes(pch=OCtype)) +
   scale_x_continuous(breaks = 1:12) +
   facet_wrap(~station, scales="free") +
   xlab("Month of year") +
@@ -101,7 +101,7 @@ p <- ggplot(subset(OA.station,
                 mapping=aes(x=month, ymin=lbnd, ymax=ubnd),
                 color="black", alpha=1,
                 linetype=1, width=0.2, na.rm=TRUE) +
-  theme_minimal() +
+  theme_minimal(base_size=24) +
   theme(legend.position = c(0.9, 0.1))
 
 png(paste(plotdir, "/",
