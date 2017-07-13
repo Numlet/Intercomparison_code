@@ -1,5 +1,8 @@
 # Directories with obs, model data, etc.
 
+# Define list of model names to use in loops
+models <- c("ACMEv0-OCEANFILMS_mix3", "GLOMAP")
+
 # netCDF data location
 ncfile_dir <- "../../"
 ncfile_name <- "reduced_chem_MOA_code.FC5PLMOD.ne30_ne30.edison.MOA_mix3.nc"

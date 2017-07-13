@@ -1,6 +1,7 @@
 # Loop over models and create plots.
 
-models <- c("ACMEv0-OCEANFILMS_mix3", "GLOMAP")
+# Load definitions including list of model names
+source("path_definitions.R")
 
 for (model_name in models) {
   source("plot_station_OA.R")
