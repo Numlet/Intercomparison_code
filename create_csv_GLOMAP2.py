@@ -27,8 +27,12 @@ total_bc_file='total_bc_mass.nc'
 submicron_sea_salt_file='L1_mcon_ss_accsol_mass_concentrationrss.nc'
 #%%
 cube=iris.load(nc_path+submicron_sea_salt_file)[0]
+total_ss_acc=cube.data*1e9
+#%%
+aitken_sea_salt_file='L1_mcon_ss_aitsol_mass_concentrationrss.nc'
+cube=iris.load(nc_path+aitken_sea_salt_file)[0]
 cube
-total_ss_acc=cube.data
+total_ss_acc=total_ss_acc+cube.data*1e9
 total_ss_acc.shape
 
 
@@ -137,13 +141,20 @@ types=["TOA","MOA"]
 months_str=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"]
 
 miami_dataset=pd.read_csv('model_data/ACMEv0-OCEANFILMS_mix3_UMiami_stations.csv')
-sites=list(set(miami_dataset['site'][:]))
-sites_long_name=list(set(miami_dataset['site.long.name']))
-lats_miami=list(set(miami_dataset['lat']))
-lons_miami=list(set(miami_dataset['lon']))
-len(lats_miami)
-len(lons_miami)
-len(sites_long_name)
+# sites=list(set(miami_dataset['site'][:]))
+# sites_long_name=list(set(miami_dataset['site.long.name']))
+# lats_miami=list(set(miami_dataset['lat']))
+# lons_miami=list(set(miami_dataset['lon']))
+# len(lats_miami)
+# len(lons_miami)
+# len(sites_long_name)
+
+
+sites=[miami_dataset['site'][i*12] for i in range(len(miami_dataset)/12)]
+sites_long_name=[miami_dataset['site.long.name'][i*12] for i in range(len(miami_dataset)/12)]
+lats_miami=[miami_dataset['lat'][i*12] for i in range(len(miami_dataset)/12)]
+lons_miami=[miami_dataset['lon'][i*12] for i in range(len(miami_dataset)/12)]
+
 
 dmia=OrderedDict()
 dmia['month']=[]
@@ -190,7 +201,7 @@ for iobs in range(len(sites)):
         dmia['month'].append(months_str[imonth])
         dmia['site'].append(sites[iobs])
         dmia['site.long.name'].append(sites_long_name[iobs])
-        print ilat, ilon, sites_long_name[iobs]
+        # print ilat, ilon, sites_long_name[iobs]
 
 for iobs in range(len(stp.lons)):
     for imonth in range(len(months_str)):
