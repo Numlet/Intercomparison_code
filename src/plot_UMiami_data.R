@@ -83,10 +83,15 @@ png(paste(plotdir, "/", model_name,
   #  legend(x=5, y=300, legend=umiami.corods$site, col=1:31, pch=(c(1:31) %% 25),
   #         box.lwd=0, lwd=0, ncol=4, xpd=NA, xjust=0.5, yjust=0,
   #         cex=0.7, y.intersp = 1.3, pt.lwd=1, bty = "n")
-  mtext(text = paste("Model-observation correlation = ",
-                     cor(total.aerosol$modeldata, total.aerosol$obsdata),
+  mtext(text = paste("Correlation = ",
+                     signif(cor(total.aerosol$modeldata, total.aerosol$obsdata), digits=2),
                      sep=""),
         side=3, line=0)
+  mtext(text = paste("RMSE = ",
+                     signif(sqrt(mean((total.aerosol$modeldata - total.aerosol$obsdata)^2,
+                                      na.rm=TRUE)), digits=2),
+                     sep=""),
+        side=3, line=1)
 dev.off()
 
 
