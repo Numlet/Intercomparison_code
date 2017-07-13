@@ -23,9 +23,19 @@ total_sea_salt_file='total_sea_salt.nc'
 total_dust_file='total_dust_mass.nc'
 total_su_file='total_su_mass.nc'
 total_bc_file='total_bc_mass.nc'
-
 submicron_sea_salt_file='sea_salt_acc.nc'
 #%%
+
+radious_accmode_file="radious_accmode.nc"
+mb=netcdf.netcdf_file(nc_path+radious_accmode_file,'r')
+mb.variables
+radious_accmode=mb.variables['radious_accmode'][:]
+
+radious_coarmode_file="radious_coarmode.nc"
+mb=netcdf.netcdf_file(nc_path+radious_coarmode_file,'r')
+mb.variables
+radious_coarmode=mb.variables['radious_coarmode'][:]
+
 mb=netcdf.netcdf_file(nc_path+submicron_sea_salt_file,'r')
 mb.variables
 total_ss_acc=mb.variables['sea_salt_acc'][:]
@@ -162,8 +172,10 @@ dmia['BC']=[]
 dmia['SO4']=[]
 dmia['NCL']=[]
 dmia['DST']=[]
-
 dmia['smSS']=[]
+dmia['radious_accmode']=[]
+dmia['radious_coarmode']=[]
+
 
 dmia['total.aerosol']=[]
 
@@ -192,6 +204,8 @@ for iobs in range(len(sites)):
         dmia['SO4'].append(total_SU[isurf,ilat,ilon,imonth])
         dmia['BC'].append(total_BC[isurf,ilat,ilon,imonth])
         dmia['smSS'].append(total_ss_acc[isurf,ilat,ilon,imonth])
+        dmia['radious_accmode'].append(radious_accmode[isurf,ilat,ilon,imonth])
+        dmia['radious_coarmode'].append(radious_coarmode[isurf,ilat,ilon,imonth])
 
         dmia['total.aerosol'].append(total_AM[isurf,ilat,ilon,imonth])
         dmia['month'].append(months_str[imonth])
@@ -219,6 +233,9 @@ for iobs in range(len(stp.lons)):
         dmia['SO4'].append(total_SU[isurf,ilat,ilon,imonth])
         dmia['BC'].append(total_BC[isurf,ilat,ilon,imonth])
         dmia['smSS'].append(total_ss_acc[isurf,ilat,ilon,imonth])
+        dmia['radious_accmode'].append(radious_accmode[isurf,ilat,ilon,imonth])
+        dmia['radious_coarmode'].append(radious_coarmode[isurf,ilat,ilon,imonth])
+
         dmia['total.aerosol'].append(total_AM[isurf,ilat,ilon,imonth])
         dmia['month'].append(months_str[imonth])
         dmia['site'].append(stp.names[iobs])
