@@ -23,6 +23,14 @@ total_dust_file='total_dust_mass.nc'
 total_su_file='total_su_mass.nc'
 total_bc_file='total_bc_mass.nc'
 
+submicron_sea_salt_file='sea_salt_acc.nc'
+#%%
+mb=netcdf.netcdf_file(nc_path+submicron_sea_salt_file,'r')
+mb.variables
+total_ss_acc=mb.variables['sea_salt_acc'][:]
+
+
+
 mb=netcdf.netcdf_file(nc_path+total_TOA_file,'r')
 mb.variables
 total_TOA=mb.variables['total_organic_mass'][:]
@@ -141,6 +149,9 @@ dmia['BC']=[]
 dmia['SO4']=[]
 dmia['NCL']=[]
 dmia['DST']=[]
+
+dmia['smSS']=[]
+
 dmia['total.aerosol']=[]
 
 
@@ -166,11 +177,38 @@ for iobs in range(len(sites)):
         dmia['DST'].append(total_DUST[isurf,ilat,ilon,imonth])
         dmia['SO4'].append(total_SU[isurf,ilat,ilon,imonth])
         dmia['BC'].append(total_BC[isurf,ilat,ilon,imonth])
+        dmia['smSS'].append(total_ss_acc[isurf,ilat,ilon,imonth])
+
         dmia['total.aerosol'].append(total_AM[isurf,ilat,ilon,imonth])
         dmia['month'].append(months_str[imonth])
         dmia['site'].append(sites[iobs])
         dmia['site.long.name'].append(sites_long_name[iobs])
         print ilat, ilon, sites_long_name[iobs]
+
+for iobs in range(len(stp.lons)):
+    for imonth in range(len(months_str)):
+        lat_point=stp.lats[iobs]
+        lon_point=stp.lons[iobs]
+
+        ilat=find_nearest_vector_index(lat,lat_point)
+        if lon_point<0:
+            ilon=find_nearest_vector_index(lon180,lon_point)
+        else:
+            ilon=find_nearest_vector_index(lon,lon_point)
+        data=total_TOA[isurf,ilat,ilon,imonth-1]
+        dmia['lat'].append(lat_point)
+        dmia['lon'].append(lon_point)
+        dmia['MOA'].append(total_MOA[isurf,ilat,ilon,imonth])
+        dmia['TOA'].append(total_TOA[isurf,ilat,ilon,imonth])
+        dmia['NCL'].append(total_SS[isurf,ilat,ilon,imonth])
+        dmia['DST'].append(total_DUST[isurf,ilat,ilon,imonth])
+        dmia['SO4'].append(total_SU[isurf,ilat,ilon,imonth])
+        dmia['BC'].append(total_BC[isurf,ilat,ilon,imonth])
+        dmia['smSS'].append(total_ss_acc[isurf,ilat,ilon,imonth])
+        dmia['total.aerosol'].append(total_AM[isurf,ilat,ilon,imonth])
+        dmia['month'].append(months_str[imonth])
+        dmia['site'].append(stp.names[iobs])
+        dmia['site.long.name'].append(stp.names[iobs])
 
 
 
