@@ -74,12 +74,20 @@ for (sitename in umiami.files) {
   }
   if (any(names(data.in)=="AVG_DUST")) {
     obsdata[["avg_dust"]] <- as.numeric(as.character(data.in$AVG_DUST))
-  } else {
+  } else if (any(names(data.in)=="AVG_ASH")) {
+    # If ashing available, use conversion factor 1.3 to get dust
+    obsdata[["avg_dust"]] <- as.numeric(as.character(data.in$AVG_ASH))*1.3
+  } else if (any(names(data.in)=="AVG_AL")) {
+    # If dust from ashing not available, use Al ion measurements, if available.
+    # Assume average 8% of dust is Al
+    # Al ion measurements are just labelled Al in datasets
+    obsdata[["avg_dust"]] <- as.numeric(as.character(data.in$X_AL))/0.08
+  } else {{
     obsdata[["avg_dust"]]<-array(NA, dim(obsdata)[1])
   }
   if (any(names(data.in)=="AVG_NO3")) {
     obsdata[["avg_no3"]] <- as.numeric(as.character(data.in$AVG_NO3))
-  } else {
+  } else 
     obsdata[["avg_no3"]]<-array(NA, dim(obsdata)[1])
   }
   if (any(names(data.in)=="AVG_MSA")) {
@@ -94,10 +102,18 @@ for (sitename in umiami.files) {
   }
   
   # Total (average) salt mass (Na+Cl), estimate using Na as conservative tracer.
-  obsdata[["avg_ncl"]] <- obsdata$avg_na*58.44/22.9898
+  # Molar mass ratio of NaCl to Na is *58.44/22.9898
+  # Sea salt is 85% NaCl
+  obsdata[["avg_ncl"]] <- obsdata$avg_na*58.44/22.9898/.85
+  
+  # Calculate nss-SO4 as total SO4 minus Na+ concentration times 0.2516, the
+  # (SO4 2-)/(Na+) mass ratio in bulk seawater [Millero and Sohn, 1992; Savoie, 2002]
+  obsdata[["avg_nssSO4"]] <- obsdata$avg_so4 - obsdata$avg_na*0.2516
+  # Where resulting value is < 0, set equal 0
+  obsdata$avg_nssSO4[obsdata$avg_nssSO4<0 & !is.na(obsdata$avg_nssSO)] <- 0
 
   # Total (average) aerosol mass for model comparison -- only compare so4+dust+ncl
-  obsdata[["total_aerosol"]] <- rowSums(cbind(obsdata$avg_so4,
+  obsdata[["total_aerosol"]] <- rowSums(cbind(obsdata$avg_nssSO4,
                                               obsdata$avg_dust,
                                               obsdata$avg_ncl),
                                               na.rm=TRUE)
