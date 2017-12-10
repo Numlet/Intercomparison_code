@@ -5,13 +5,13 @@ library(ggplot2)
 source("path_definitions.R")
 
 # Read model and obs data from .csv files
-models <- c("ACMEv0-OCEANFILMS_mix3", "GLOMAP")
+models <- c("ACMEv0-OCEANFILMS_mix3", "GLOMAP", "GLOMAP2")
 
 aerosol.station <- data.frame()
 for (model_name in models) {
   tmp <- read.csv(paste(csv_dir, "/", model_name,
                         "_UMiami_stations.csv", sep=""))
-  helper <- data.frame(month=ordered(tmp$month, levels=monthnames, labels=monthnames),
+  helper <- data.frame(month=as.numeric(ordered(tmp$month, levels=monthnames, labels=monthnames)),
                        station=tmp$site,
                        station.long.name=tmp$site.long.name,
                        lat=tmp$lat,
@@ -30,10 +30,13 @@ for (model_name in models) {
   if (model_name=="ACMEv0-OCEANFILMS_mix3") {
     helper["TOA"] <- tmp$MOA + tmp$SOA + tmp$POA
     helper["COA"] <- tmp$SOA + tmp$POA
-  } else if (model_name=="GLOMAP") {
+  } else if (model_name=="GLOMAP" | model_name=="GLOMAP2") {
     helper["TOA"] <- tmp$TOA
     helper["COA"] <- tmp$TOA - tmp$MOA
   }
+#  if (model_name=="GLOMAP2") {
+#    helper$smSS <- helper$smSS*1e9
+#  }
   helper$TOC <- helper$TOA/OM_to_OC
   helper$COC <- helper$COA/OM_to_OC
   helper$OMF <- helper$MOA/(helper$MOA + helper$smSS)
@@ -66,7 +69,7 @@ p <- ggplot(aerosol.sel_stations,
             aes(x=month, y=smSS, group=model,
                 color=model)) +
   geom_line(size=2)  + geom_point() +
-  #scale_x_continuous(breaks = 1:12) +
+  scale_x_continuous(breaks = 1:12) +
   facet_wrap(~station, scales="free") +
   xlab("Month of year") +
   ylab(expression(paste("Submicron SSA mass [", mu, "g", m^{-3}, "]",
@@ -75,8 +78,8 @@ p <- ggplot(aerosol.sel_stations,
   theme(legend.position = c(0.9, 0.1))
 
 png(paste(plotdir, "/",
-          "compare_models_Station_NCL_seasonal.png", sep=""),
-          pointsize = 24, width=900, height=1200)
+          "compare_models_Station_submicron_SS_seasonal.png", sep=""),
+          pointsize = 24, width=1000, height=1200)
   print(p)
 dev.off()
 # TODO: Add lat, lon to labels under name of location
@@ -89,6 +92,7 @@ pTOC <- ggplot(aerosol.sel_stations,
   geom_line(mapping = aes(x=month, y=COC,
                           group=model, color=model),
             size=2, linetype=2) +
+  scale_x_continuous(breaks = 1:12) +
   facet_wrap(~station, scales="free") +
   xlab("Month of year") +
   ylab(expression(paste("Organic carbon aerosol mass [", mu, "g", m^{-3}, "]",
@@ -106,7 +110,7 @@ pTOC <- ggplot(aerosol.sel_stations,
 
 png(paste(plotdir, "/",
           "compare_models_Station_TOC_seasonal.png", sep=""),
-    pointsize = 24, width=900, height=1200)
+    pointsize = 24, width=1000, height=1200)
   print(pTOC)
 dev.off()
 
@@ -114,6 +118,7 @@ dev.off()
 pMOC <- ggplot(aerosol.sel_stations,
                aes(x=month, y=MOC, group=model, color=model)) +
   geom_line(size=2)  +
+  scale_x_continuous(breaks = 1:12) +
   facet_wrap(~station, scales="free") +
   xlab("Month of year") +
   ylab(expression(paste("Marine organic carbon mass [", mu, "g", m^{-3}, "]",
@@ -123,7 +128,7 @@ pMOC <- ggplot(aerosol.sel_stations,
 
 png(paste(plotdir, "/",
           "compare_models_Station_MOC_seasonal.png", sep=""),
-    pointsize = 24, width=900, height=1200)
+    pointsize = 24, width=1000, height=1200)
   print(pMOC)
 dev.off()
 
@@ -140,6 +145,6 @@ pOMF <- ggplot(aerosol.sel_stations,
 
 png(paste(plotdir, "/",
           "compare_models_Station_OMF_seasonal.png", sep=""),
-    pointsize = 24, width=900, height=1200)
+    pointsize = 24, width=1000, height=1200)
   print(pOMF)
 dev.off()
